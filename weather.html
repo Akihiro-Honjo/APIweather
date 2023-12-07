@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather</title>
+    <style>
+        #view{
+            padding: 10px;
+            border: 4px solid #6f28bb;
+            width: 50%;
+            background-color: aliceblue;
+            height:500px;
+            overflow: auto;
+        }
+        img{
+            width:50px;
+        }
+        #view>div{
+            border-bottom: 1px dotted #3838ab;
+            font-size:medium;
+        }
+        .bold{
+            font-weight: bold;
+        }
+        h2{
+            font-size:x-large;
+            color:#f1071e;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>
+           <span id="area"></span> ジーズアカデミー　各拠点の天気予報
+        </h1>
+        <div id="view"></div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script>
+        //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+        //MAP表示処理
+        //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+        const key   = "44f21d70fa2bc483104ea85ef9c3b4ab";  
+        // const lat   = "33.586644";   //緯度
+        // const lon   = "130.394451";  //経度
+        const cities = [
+            { name: "東京", lat: "35.6895", lon: "139.6917" },
+            { name: "山口", lat: "34.093080", lon: "131.394326" },
+            { name: "札幌", lat: "43.0621", lon: "141.3544" },
+            { name: "福岡", lat: "33.5904", lon: "130.4017" }
+        ];
+        //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+        //OpenWeatherAPI（天気情報を取得）5DAY/3hour
+        //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+        function getWeather(city) {
+        const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${city.lat}&lon=${city.lon}&appid=${key}&lang=ja`;
+
+
+        $.ajax({
+            url:url,
+            type:'get',
+            cache:false,
+            dataType:'json'
+        }).done(function(data){
+            // console.log(data.list[0].dt_txt);
+            console.log(data);
+
+            let html =`<h2>${city.name}</h2>`;
+            for(let i=0; i<data.list.length; i++){
+                html += `
+                    <div>
+                    <div>時間:${data.list[i].dt_txt}</div>
+                    <div>天気:${data.list[i].weather[0].description} </div>
+                    </div>
+                    `;
+            }
+     
+            $("#view").append(html);
+        });
+        }
+
+        cities.forEach(city => {
+            getWeather(city);
+        });
+
+    </script>
+</body>
+</html>
